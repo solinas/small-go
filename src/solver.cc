@@ -38,8 +38,8 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
 
   if (game->size() == 3) {
     for (Theorem *t : theorems_3x3) {
-      if (t->applies(game->get_board(), c)) {
-        best.value = t->get_value();
+      if (t->applies(game->get_board(), Go::opponent(c))) {
+        best.value = -1 * t->get_value();
         best.terminal = true;
         best.benson = true;
         return best;
