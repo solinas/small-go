@@ -22,6 +22,7 @@ class Corner3x3 : public Theorem {
   // and isomorphic positions
  public:
   Corner3x3() { value = 9; }
+ 
   bool applies(const Board& b, Color c) {
     long positions[] = {26, 50, 152, 176};
     long liberties[] = {1, 4, 64, 256};
@@ -49,6 +50,7 @@ class Corner3x3 : public Theorem {
 class Middle3x3 : public Theorem {
  public:
   Middle3x3() { value = 9; }
+
   bool applies(const Board& b, Color c) {
     long empty = b.empty_points();
     // .x.
@@ -77,3 +79,17 @@ class Middle3x3 : public Theorem {
 };
 
 
+class SideOnly3x3 : public Theorem {
+ public:
+  SideOnly3x3() { value = -9; }
+
+  bool applies(const Board& b, Color c) {
+    long sides[] = {5, 73, 292, 448};
+    long empty = b.empty_points();
+    for (auto side : sides) {
+      // 2^9 -1 = 511 (full board)
+      if (b.stones[c] == side && (side | empty) == 511) return true;
+    }
+    return false;
+  }
+};
