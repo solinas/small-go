@@ -37,9 +37,9 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   }
 
   if (game->size() == 3) {
-    for (Theorem t : theorems_3x3) {
-      if (t.applies(game->get_board(), c)) {
-        best.value = t.get_value();
+    for (Theorem *t : theorems_3x3) {
+      if (t->applies(game->get_board(), c)) {
+        best.value = t->get_value();
         best.terminal = true;
         best.benson = true;
         return best;
@@ -121,34 +121,12 @@ void Solver::display_results(Result r, int max_depth) {
 }
 
 void Solver::init_theorems_3x3() {
-  // ...
-  // xxx
-  // ...
-  std::vector<long> lib_masks;
-  lib_masks.push_back(365);
-  theorems_3x3.push_back(Theorem(146, lib_masks, 9));
-  lib_masks.clear();
-  lib_masks.push_back(455);
-  theorems_3x3.push_back(Theorem(56, lib_masks, 9));
-
-  // ...
-  // xx.
-  // .x.
-  lib_masks.clear();
-  lib_masks.push_back(1);
-  lib_masks.push_back(484);
-  theorems_3x3.push_back(Theorem(26, lib_masks, 9));
-  lib_masks.clear();
-  lib_masks.push_back(64);
-  lib_masks.push_back(295);
-  theorems_3x3.push_back(Theorem(152, lib_masks, 9));
-  lib_masks.clear();
-  lib_masks.push_back(256);
-  lib_masks.push_back(79);
-  theorems_3x3.push_back(Theorem(176, lib_masks, 9));
-  lib_masks.clear();
-  lib_masks.push_back(4);
-  lib_masks.push_back(457);
-  theorems_3x3.push_back(Theorem(50, lib_masks, 9));
+  theorems_3x3.push_back(new Middle3x3());
+  theorems_3x3.push_back(new Corner3x3());
 }
 
+void Solver::clean_theorems_3x3() {
+  for (auto t : theorems_3x3) {
+    delete t;
+  }
+}

@@ -92,12 +92,13 @@ class Solver {
   long nodes;
   bool verbose;
   Clock::time_point start;
-  std::vector<Theorem> theorems_3x3;
+  std::vector<Theorem*> theorems_3x3;
   Result alpha_beta(Go *game, Color c, float alpha, float beta, int depth,
       int max_depth);
   void display_results(Result r, int max_depth);
   void display_intermediate();
   void init_theorems_3x3();
+  void clean_theorems_3x3();
 
  public:
   Solver();
