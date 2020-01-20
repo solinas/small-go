@@ -143,11 +143,11 @@ void Solver::init_theorems_3x3() {
   lib_masks.push_back(295);
   theorems_3x3.push_back(Theorem(152, lib_masks, 9));
   lib_masks.clear();
-  lib_masks.push_back(4);
+  lib_masks.push_back(256);
   lib_masks.push_back(79);
   theorems_3x3.push_back(Theorem(176, lib_masks, 9));
   lib_masks.clear();
-  lib_masks.push_back(256);
+  lib_masks.push_back(4);
   lib_masks.push_back(457);
   theorems_3x3.push_back(Theorem(50, lib_masks, 9));
 }
