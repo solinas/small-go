@@ -103,4 +103,5 @@ class Solver {
  public:
   Solver();
   int solve(Go *game, Color c);
+  int solve(Go *game, Color c, int max_depth);
 };

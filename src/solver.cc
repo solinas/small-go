@@ -6,10 +6,15 @@
 Solver::Solver() : nodes(0), verbose(true) { init_theorems_3x3(); }
 
 int Solver::solve(Go *game, Color c) {
+  int max_score = game->size() * game->size();
+  return solve(game, c, max_score);  
+}
+
+int Solver::solve(Go *game, Color c, int max_score) {
   nodes = 0;
   start = Clock::now();
-  int max_score = game->size() * game->size();
   int max_depth = 0;
+  
   Result r;
 
   while (r.is_undefined()) {
