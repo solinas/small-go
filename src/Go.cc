@@ -162,6 +162,30 @@ long Go::get_moves(std::vector<int> *moves) {
   return legal.to_ulong();
 }
 
+long Go::get_current_path() {
+  return paths[0].top();
+}
+
+std::array<long, NUM_ISO> Go::get_isomorphic_paths() {
+  std::array<long, NUM_ISO> ret;
+  for (int i = 0; i < NUM_ISO; i++) {
+    ret[i] = paths[i].top();
+  }
+  return ret;
+}
+
+std::array<int, NUM_ISO> Go::get_isomorphic_moves(int move) {
+  std::array<int, NUM_ISO> ret;
+  for (int i = 0; i < NUM_ISO; i++) {
+    ret[i] = move;
+    move = Board::rotation90_index_3x3[move];
+    if (i % 4 == 0 && i > 0) {
+      move = Board::horiz_flip_index_3x3[move];
+    }
+  }
+  return ret;
+}
+
 Board& Go::get_board() { return boards[0].top(); }
 
 Color Go::opponent(Color c) { return Board::opponent(c); }

@@ -3,6 +3,7 @@
 
 #include<chrono>
 #include <list>
+#include <map>
 #include "Go.h"
 #include "theorems.h"
 
@@ -43,6 +44,13 @@ struct Result {
   friend inline bool operator>=(const Result& l, const Result& r) {
     return !(l < r);
   }
+};
+
+struct TT_entry {
+  TT_entry() {}
+  TT_entry(Result r, Color c) : res(r), to_move(c) {}
+  Result res;
+  Color to_move;
 };
 
 static constexpr int side_rank[9] = {0, 1, 0, 1, 2, 1, 0, 1, 0};
@@ -93,12 +101,15 @@ class Solver {
   bool verbose;
   Clock::time_point start;
   std::vector<Theorem*> theorems_3x3;
+  std::map<long, TT_entry> TT;
   Result alpha_beta(Go *game, Color c, float alpha, float beta, int depth,
       int max_depth);
   void display_results(Result r, int max_depth);
   void display_intermediate();
   void init_theorems_3x3();
   void clean_theorems_3x3();
+  void add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
+    std::array<int, NUM_ISO> iso_moves, float value, Color to_move);
 
  public:
   Solver();

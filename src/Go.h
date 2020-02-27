@@ -41,12 +41,14 @@ class Go {
   bool undo_move();
   float score(Color color);
   long get_moves(std::vector<int> *moves);
-  long get_pruned_moves(std::vector<int> *moves);
   void print_board();
   int size();
   bool game_over();
   static Color opponent(Color c);
   Board& get_board();
+  std::array<long, NUM_ISO> get_isomorphic_paths();
+  std::array<int, NUM_ISO> get_isomorphic_moves(int move);
+  long get_current_path();
 };
 
 

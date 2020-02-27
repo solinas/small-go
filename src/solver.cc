@@ -52,6 +52,12 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
     }
   }
 
+  // now check transposition table to see if we found an isomorphism
+  long current_path = game->get_current_path();
+  if (TT.find(current_path) != TT.end() && TT[current_path].to_move == c) {
+    return TT[current_path].res;
+  }
+
   // generate and sort moves
   std::vector<int> moves;
   game->get_moves(&moves);
@@ -93,6 +99,9 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   if (!best.benson && undefined) {
     // clear the best move because we can't say anything yet
     best.reset();
+  } else if (!undefined && best.best_move != PASS_IND){
+    add_iso_pos_to_TT(game->get_isomorphic_paths(),
+        game->get_isomorphic_moves(best.best_move), best.value, c);
   }
 
   best.benson = false;
@@ -134,5 +143,17 @@ void Solver::init_theorems_3x3() {
 void Solver::clean_theorems_3x3() {
   for (auto t : theorems_3x3) {
     delete t;
+  }
+}
+
+void Solver::add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
+    std::array<int, NUM_ISO> iso_moves, float value, Color to_move) {
+  for (int i = 0; i < NUM_ISO; i++) {
+    Result r;
+    r.value = value;
+    r.best_move = iso_moves[i];
+    r.terminal = true;
+    TT_entry entry(r, to_move);
+    TT[batch[i]] = entry;
   }
 }
