@@ -6,18 +6,36 @@
 
 Go::Go(int _n) : to_move(BLACK), n(_n) {
   Board::init_zobrist();
-  
+  init_path_hash_table(n);
   // set up 8 boards for handling isomorphisms
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < NUM_ISO; i++) {
     std::stack<Board> b;
     b.push(Board(_n));
     boards.push_back(b);
+    std::stack<long> p;
+    p.push(0);
+    paths.push_back(p);
   }
   
   passes.push(0);
 }
 
-Go::~Go() {}
+Go::~Go() {
+ for (int i = 0; i < n; i++) {
+   delete[] path_hash[i];
+ }
+ delete[] path_hash;
+}
+
+void Go::init_path_hash_table(int n) {
+  path_hash = new long*[n*n];
+  for (int i = 0; i < n*n; i++) {
+    path_hash[i] = new long[MAX_DEPTH];
+    for (int j = 0; j < MAX_DEPTH; j++) {
+      path_hash[i][j] = std::rand();
+    }
+  }
+}
 
 int Go::size() { return n; }
 
@@ -30,6 +48,7 @@ bool Go::make_move(int point_ind, Color color) {
   // first copy
   for (int i = 0; i < NUM_ISO; i++) {
     boards[i].push(boards[i].top());
+    paths[i].push(paths[i].top());
   }
 
   // check for a pass
@@ -44,11 +63,13 @@ bool Go::make_move(int point_ind, Color color) {
   bool res = boards[0].top().move(point_ind, color);
   if (!res) {
     boards[0].pop();
+    paths[0].pop();
   } else {
     // move succeeded, check superko
     if (superko_hist.find(boards[0].top().h) != superko_hist.end()) {
       res = false;
       boards[0].pop();
+      paths[0].pop();
     } else {
       superko_hist.insert(boards[0].top().h);
     }
@@ -57,6 +78,7 @@ bool Go::make_move(int point_ind, Color color) {
   if (res) {
     // all checks done, reset pass counter, make moves on iso boards
     passes.push(0);
+    paths[0].top() ^= path_hash[point_ind][boards[0].size()];
      
     if (n == 3) {
       // TODO flips/rotations hard-coded for 3x3 right now
@@ -69,6 +91,7 @@ bool Go::make_move(int point_ind, Color color) {
 
         // make the isomorphic move
         res = boards[i].top().move(point_ind, color);
+        paths[i].top() ^= path_hash[point_ind][boards[i].size()];
         assert(res);
       }
     }
@@ -81,6 +104,7 @@ bool Go::make_move(int point_ind, Color color) {
     // checks failed, remove copied boards
     for (int i =1; i < NUM_ISO; i++) {
       boards[i].pop();
+      paths[i].pop();
     }
   }
     
@@ -96,7 +120,9 @@ bool Go::undo_move() {
   if (last_passes <= passes.top())  superko_hist.erase(old.h);
   for (int i = 0; i < NUM_ISO; i++) {
     boards[i].pop();
+    paths[i].pop();
     assert(passes.size() == boards[i].size());
+    assert(paths[i].size() == boards[i].size());
   }
   switch_to_move();
   return true;

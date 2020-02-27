@@ -19,6 +19,7 @@
 constexpr int PASS_IND = -1;
 constexpr int MAX_VAL = 100000;
 constexpr int NUM_ISO = 8;
+constexpr int MAX_DEPTH = 150;
 
 class Go {
   std::vector<std::stack<Board>> boards;
@@ -26,9 +27,11 @@ class Go {
   int to_move;
   int n;
   std::stack<int> passes;
+  long **path_hash;
+  std::vector<std::stack<long>> paths;
 
-  // private methods
   void switch_to_move();
+  void init_path_hash_table(int n);
 
  public:
   Go(int n);
