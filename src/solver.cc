@@ -65,7 +65,7 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   game->get_moves(&moves);
   if (game->size() == 3) {
     std::sort(moves.begin(), moves.end(),
-      move_ordering_3x3(game->get_board(), c));
+      move_ordering_3x3(game->get_board(), c, d));
   } else if (game->size() == 2) {
     std::sort(moves.begin(), moves.end(), move_ordering_2x2());
   }
@@ -94,7 +94,10 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
       alpha = r.value;
     }
     // pruning
-    if (alpha >= beta || best.benson) break;
+    if (alpha >= beta) {
+      killer_table[d] = r.best_move;
+      break;
+    }
   }
 
   if (!best.benson && undefined) best.reset();

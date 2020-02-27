@@ -56,13 +56,16 @@ struct TT_entry {
 
 static constexpr int side_rank[9] = {0, 1, 0, 1, 2, 1, 0, 1, 0};
 
+static int killer_table[MAX_DEPTH] = {-2};
+
 struct move_ordering_3x3 {
  private:
   Board& b;
   Color c;
+  int depth;
 
  public:
-  move_ordering_3x3(Board& _b, Color _c) : b(_b), c(_c) {}
+  move_ordering_3x3(Board& _b, Color _c, int d) : b(_b), c(_c), depth(d) {}
 
   // i > j functor for move ordering
   bool operator()(int i, int j) const {
@@ -70,6 +73,10 @@ struct move_ordering_3x3 {
     bool res_i, res_j;
     res_i = b_i.move(i, c);
     res_j = b_j.move(j, c);
+
+    // if one of them is the killer and legal, it has highest priority
+    if (res_i && killer_table[depth] == i) return true;
+    if (res_j && killer_table[depth] == j) return false;
 
     // make sure the moves are legal and they don't put c into atari
     if (!res_i || b_i.atari(i)) return false;
