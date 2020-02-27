@@ -35,7 +35,7 @@ struct Board {
 
   // helper functions
   long empty_points() const;
-  void print();
+  void print() const;
 
   static long z_table[2][64];
   static void init_zobrist();

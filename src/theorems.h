@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "board.h"
+#include <iostream>
 
 class Theorem {
  protected:
@@ -38,7 +39,9 @@ class Corner3x3 : public Theorem {
           // matches required shape for corner theorem, just need
           // an additional liberty to make it safe
           long other = ~(liberty | position);
-          if ((other & empty) != 0) return true;
+          if ((other & empty) != 0) {
+            return true;
+          }
         }
       }
     }
@@ -71,7 +74,9 @@ class Middle3x3 : public Theorem {
     // xxx
     // ...
     if ((b.stones[c] & 56) == 56) {
-     if (((56 << 3) & empty) != 0 && ((56 >> 3) & empty) != 0) return true;
+     if (((56 << 3) & empty) != 0 && ((56 >> 3) & empty) != 0) {
+       return true;
+      }
     }
 
     return false;
@@ -88,7 +93,9 @@ class SideOnly3x3 : public Theorem {
     long empty = b.empty_points();
     for (auto side : sides) {
       // 2^9 -1 = 511 (full board)
-      if (b.stones[c] == side && (side | empty) == 511) return true;
+      if (b.stones[c] == side && (side | empty) == 511) {
+        return true;
+      }
     }
     return false;
   }

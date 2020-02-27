@@ -44,6 +44,7 @@ class Go {
   void print_board();
   int size();
   bool game_over();
+  bool last_move_was_pass();
   static Color opponent(Color c);
   Board& get_board();
   std::array<long, NUM_ISO> get_isomorphic_paths();

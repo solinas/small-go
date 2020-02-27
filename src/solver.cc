@@ -33,8 +33,6 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   Result best;
   if (d > max_depth) return best;
 
-  nodes += 1;
-
   if (game->game_over() || (MAX_NODES > 0 && nodes > MAX_NODES)) {
     best.value = game->score(c);
     best.terminal = true;
@@ -55,13 +53,16 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   // now check transposition table to see if we found an isomorphism
   long current_path = game->get_current_path();
   if (TT.find(current_path) != TT.end() && TT[current_path].to_move == c) {
-    return TT[current_path].res;
+    if (TT[current_path].max_depth >= max_depth || TT[current_path].res.terminal) {
+      return TT[current_path].res;
+    }
   }
+  
+  nodes += 1;
 
   // generate and sort moves
   std::vector<int> moves;
   game->get_moves(&moves);
-  // could use some polymorphism here with a general ordering object
   if (game->size() == 3) {
     std::sort(moves.begin(), moves.end(),
       move_ordering_3x3(game->get_board(), c));
@@ -93,15 +94,15 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
       alpha = r.value;
     }
     // pruning
-    if (alpha >= beta) break;
+    if (alpha >= beta || best.benson) break;
   }
 
-  if (!best.benson && undefined) {
-    // clear the best move because we can't say anything yet
-    best.reset();
-  } else if (!undefined && best.best_move != PASS_IND){
+  if (!best.benson && undefined) best.reset();
+
+  if (!undefined && !game->last_move_was_pass()) {
     add_iso_pos_to_TT(game->get_isomorphic_paths(),
-        game->get_isomorphic_moves(best.best_move), best.value, c);
+        game->get_isomorphic_moves(best.best_move), best.value, c, 
+        best.terminal, max_depth);
   }
 
   best.benson = false;
@@ -147,13 +148,17 @@ void Solver::clean_theorems_3x3() {
 }
 
 void Solver::add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
-    std::array<int, NUM_ISO> iso_moves, float value, Color to_move) {
+    std::array<int, NUM_ISO> iso_moves, float value, Color to_move,
+    bool terminal, int max_depth) {
+  if (batch[0] == 0) return;
   for (int i = 0; i < NUM_ISO; i++) {
-    Result r;
-    r.value = value;
-    r.best_move = iso_moves[i];
-    r.terminal = true;
-    TT_entry entry(r, to_move);
-    TT[batch[i]] = entry;
+    if (TT.find(batch[i]) == TT.end() || !TT[batch[i]].res.terminal) {
+      Result r;
+      r.value = value;
+      r.best_move = iso_moves[i];
+      r.terminal = terminal;
+      TT_entry entry(r, to_move, max_depth);
+      TT[batch[i]] = entry;
+    }
   }
 }

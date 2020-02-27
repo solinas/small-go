@@ -43,6 +43,8 @@ bool Go::game_over() {
   return passes.top() > 1;
 }
 
+bool Go::last_move_was_pass() { return passes.top() > 0; }
+
 bool Go::make_move(int point_ind, Color color) {
 
   // first copy
@@ -178,9 +180,11 @@ std::array<int, NUM_ISO> Go::get_isomorphic_moves(int move) {
   std::array<int, NUM_ISO> ret;
   for (int i = 0; i < NUM_ISO; i++) {
     ret[i] = move;
-    move = Board::rotation90_index_3x3[move];
-    if (i % 4 == 0 && i > 0) {
-      move = Board::horiz_flip_index_3x3[move];
+    if (move >= 0) {
+      move = Board::rotation90_index_3x3[move];
+      if (i % 4 == 0 && i > 0) {
+        move = Board::horiz_flip_index_3x3[move];
+      }
     }
   }
   return ret;

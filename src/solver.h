@@ -14,7 +14,7 @@ constexpr long MAX_NODES = 0;
 constexpr int UNDEFINED = -2;
 
 struct Result {
-  Result() : value(-1 * MAX_VAL), best_move(UNDEFINED), terminal(false),
+  Result() : value(-1*MAX_VAL), best_move(UNDEFINED), terminal(false),
     benson(false) {}
   float value;
   int best_move;
@@ -48,9 +48,10 @@ struct Result {
 
 struct TT_entry {
   TT_entry() {}
-  TT_entry(Result r, Color c) : res(r), to_move(c) {}
+  TT_entry(Result r, Color c, int d) : res(r), to_move(c), max_depth(d) {}
   Result res;
   Color to_move;
+  int max_depth;
 };
 
 static constexpr int side_rank[9] = {0, 1, 0, 1, 2, 1, 0, 1, 0};
@@ -109,7 +110,8 @@ class Solver {
   void init_theorems_3x3();
   void clean_theorems_3x3();
   void add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
-    std::array<int, NUM_ISO> iso_moves, float value, Color to_move);
+    std::array<int, NUM_ISO> iso_moves, float value, Color to_move,
+    bool terminal, int max_depth);
 
  public:
   Solver();

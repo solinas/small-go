@@ -163,7 +163,7 @@ float Board::score(Color color) {
   return score;
 }
 
-void Board::print() {
+void Board::print() const {
   std::bitset<64> b(stones[BLACK]);
   std::bitset<64> w(stones[WHITE]);
   Color color;
