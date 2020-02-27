@@ -39,4 +39,7 @@ struct Board {
 
   static long z_table[2][64];
   static void init_zobrist();
+  static constexpr int rotation90_index_3x3[9] = {2,5,8,1,4,7,0,3,6};
+  static constexpr int horiz_flip_index_3x3[9]  = {6,7,8,3,4,5,0,1,2};
 };
+

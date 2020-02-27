@@ -18,9 +18,10 @@
 
 constexpr int PASS_IND = -1;
 constexpr int MAX_VAL = 100000;
+constexpr int NUM_ISO = 8;
 
 class Go {
-  std::stack<Board> boards;
+  std::vector<std::stack<Board>> boards;
   std::set<long> superko_hist;
   int to_move;
   int n;
@@ -37,6 +38,7 @@ class Go {
   bool undo_move();
   float score(Color color);
   long get_moves(std::vector<int> *moves);
+  long get_pruned_moves(std::vector<int> *moves);
   void print_board();
   int size();
   bool game_over();

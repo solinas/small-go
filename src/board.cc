@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+constexpr int Board::rotation90_index_3x3[];
+constexpr int Board::horiz_flip_index_3x3[];
+
 std::map<int, char> color_chars = {
   {EMPTY, '.'}, {BLACK, 'b'}, {WHITE, 'w'}
 };
