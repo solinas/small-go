@@ -75,8 +75,13 @@ struct move_ordering_3x3 {
     res_j = b_j.move(j, c);
 
     // if one of them is the killer and legal, it has highest priority
-    if (res_i && killer_table[depth] == i) return true;
-    if (res_j && killer_table[depth] == j) return false;
+    if (res_i && killer_table[depth] == i && !b_i.atari(i)) return true;
+    if (res_j && killer_table[depth] == j && !b_j.atari(j)) return false;
+
+    // now try passing
+    if (i < 0) return true;
+    if (j < 0) return false;
+
 
     // make sure the moves are legal and they don't put c into atari
     if (!res_i || b_i.atari(i)) return false;
@@ -89,10 +94,6 @@ struct move_ordering_3x3 {
     if (score_i < score_j) return false;
 
     // break ties with location of move heuristic
-    // prefer to move instead of pass
-    if (i < 0) return false;
-    if (j < 0) return true;
-
     return side_rank[i] > side_rank[j];
   }
 };
