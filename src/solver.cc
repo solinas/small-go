@@ -104,8 +104,7 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
 
   if (!undefined && !game->last_move_was_pass()) {
     add_iso_pos_to_TT(game->get_isomorphic_paths(),
-        game->get_isomorphic_moves(best.best_move), best.value, c, 
-        best.terminal, max_depth);
+        game->get_isomorphic_moves(best.best_move), best, c, max_depth);
   }
 
   best.benson = false;
@@ -150,16 +149,15 @@ void Solver::clean_theorems_3x3() {
   }
 }
 
+// TODO: pv bug because it's recovered from here
 void Solver::add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
-    std::array<int, NUM_ISO> iso_moves, float value, Color to_move,
-    bool terminal, int max_depth) {
+    std::array<int, NUM_ISO> iso_moves, Result res, Color to_move, 
+    int max_depth) {
   if (batch[0] == 0) return;
   for (int i = 0; i < NUM_ISO; i++) {
     if (TT.find(batch[i]) == TT.end() || !TT[batch[i]].res.terminal) {
-      Result r;
-      r.value = value;
+      Result r(res);
       r.best_move = iso_moves[i];
-      r.terminal = terminal;
       TT_entry entry(r, to_move, max_depth);
       TT[batch[i]] = entry;
     }

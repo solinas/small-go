@@ -118,8 +118,7 @@ class Solver {
   void init_theorems_3x3();
   void clean_theorems_3x3();
   void add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
-    std::array<int, NUM_ISO> iso_moves, float value, Color to_move,
-    bool terminal, int max_depth);
+    std::array<int, NUM_ISO> iso_moves, Result r, Color to_move, int max_depth);
 
  public:
   Solver();
