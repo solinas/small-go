@@ -32,6 +32,7 @@ struct Board {
   float score(Color color);
   static Color opponent(Color color);
   void update_zobrist(long group, Color color);
+  bool fills_eye(int move, Color c);
 
   // helper functions
   long empty_points() const;

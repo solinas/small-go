@@ -164,6 +164,10 @@ long Go::get_moves(std::vector<int> *moves) {
   return legal.to_ulong();
 }
 
+bool Go::fills_eye(int point_ind, Color c) {
+  return boards[0].top().fills_eye(point_ind, c);
+}
+
 long Go::get_current_path() {
   return paths[0].top();
 }

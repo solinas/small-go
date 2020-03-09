@@ -51,12 +51,12 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   }
 
   // now check transposition table to see if we found an isomorphism
-  long current_path = game->get_current_path();
-  if (TT.find(current_path) != TT.end() && TT[current_path].to_move == c) {
-    if (TT[current_path].max_depth >= max_depth || TT[current_path].res.terminal) {
-      return TT[current_path].res;
-    }
-  }
+ // long current_path = game->get_current_path();
+ // if (TT.find(current_path) != TT.end() && TT[current_path].to_move == c) {
+ //   if (TT[current_path].max_depth >= max_depth || TT[current_path].res.terminal) {
+ //    return TT[current_path].res;
+ //   }
+ // }
   
   nodes += 1;
 
@@ -72,6 +72,7 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
 
   bool undefined = false;
   for (auto move : moves) {
+    if (game->fills_eye(move, c)) continue;
     bool legal = game->make_move(move, c);
     if (!legal) continue;
     Result r = alpha_beta(game, Go::opponent(c), -1 * beta, -1 * alpha, d + 1,
@@ -103,8 +104,8 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   if (!best.benson && undefined) best.reset();
 
   if (!undefined && !game->last_move_was_pass()) {
-    add_iso_pos_to_TT(game->get_isomorphic_paths(),
-        game->get_isomorphic_moves(best.best_move), best, c, max_depth);
+//    add_iso_pos_to_TT(game->get_isomorphic_paths(),
+ //       game->get_isomorphic_moves(best.best_move), best, c, max_depth);
   }
 
   best.benson = false;

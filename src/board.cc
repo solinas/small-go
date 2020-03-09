@@ -98,6 +98,11 @@ bool Board::move(int point_ind, Color color) {
   return get_liberties(group) != 0;
 }
 
+bool Board::fills_eye(int move, Color c) {
+  long neighbors = get_neighbors(move);
+  return (neighbors & stones[c]) == neighbors;
+}
+
 long Board::get_neighbors(long group) {
   long neighbors = 0;
   // shift left, remove right border neighbors

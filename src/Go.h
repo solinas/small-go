@@ -44,6 +44,7 @@ class Go {
   void print_board();
   int size();
   bool game_over();
+  bool fills_eye(int point_ind, Color c);
   bool last_move_was_pass();
   static Color opponent(Color c);
   Board& get_board();
