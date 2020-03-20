@@ -1,0 +1,4 @@
+play b b1
+play w b2
+genmove b
+quit

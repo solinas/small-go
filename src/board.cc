@@ -99,7 +99,7 @@ bool Board::move(int point_ind, Color color) {
 }
 
 bool Board::fills_eye(int move, Color c) {
-  long neighbors = get_neighbors(move);
+  long neighbors = get_neighbors(1 << move);
   return (neighbors & stones[c]) == neighbors;
 }
 

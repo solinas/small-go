@@ -78,10 +78,6 @@ struct move_ordering_3x3 {
     if (res_i && killer_table[depth] == i && !b_i.atari(i)) return true;
     if (res_j && killer_table[depth] == j && !b_j.atari(j)) return false;
 
-    // now try passing
-    if (i < 0) return true;
-    if (j < 0) return false;
-
 
     // make sure the moves are legal and they don't put c into atari
     if (!res_i || b_i.atari(i)) return false;
@@ -92,6 +88,9 @@ struct move_ordering_3x3 {
     float score_j = b_j.score(c);
     if (score_i > score_j) return true;
     if (score_i < score_j) return false;
+    
+    if (i < 0) return true;
+    if (j < 0) return false;
 
     // break ties with location of move heuristic
     return side_rank[i] > side_rank[j];
@@ -117,8 +116,7 @@ class Solver {
   void display_intermediate();
   void init_theorems_3x3();
   void clean_theorems_3x3();
-  void add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
-    std::array<int, NUM_ISO> iso_moves, Result r, Color to_move, int max_depth);
+  void add_to_TT(long pos, Result r, Color to_move, int max_depth);
 
  public:
   Solver();

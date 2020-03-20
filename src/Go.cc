@@ -165,6 +165,7 @@ long Go::get_moves(std::vector<int> *moves) {
 }
 
 bool Go::fills_eye(int point_ind, Color c) {
+  if (point_ind < 0) return false;
   return boards[0].top().fills_eye(point_ind, c);
 }
 

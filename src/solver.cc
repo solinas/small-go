@@ -18,6 +18,7 @@ int Solver::solve(Go *game, Color c, int max_score) {
   Result r;
 
   while (r.is_undefined()) {
+    TT.clear();
     r = alpha_beta(game, c, -1.0 * max_score, 1.0 * max_score, 0, ++max_depth);
     r.pv.push_front(r.best_move);
     if (verbose) {
@@ -51,12 +52,12 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   }
 
   // now check transposition table to see if we found an isomorphism
- // long current_path = game->get_current_path();
- // if (TT.find(current_path) != TT.end() && TT[current_path].to_move == c) {
- //   if (TT[current_path].max_depth >= max_depth || TT[current_path].res.terminal) {
- //    return TT[current_path].res;
- //   }
- // }
+  std::array<long, NUM_ISO> iso_paths = game->get_isomorphic_paths();
+  for (auto path : iso_paths) {
+    if (TT.find(path) != TT.end() && TT[path].to_move == c) {
+     return TT[path].res;
+    }
+  }
   
   nodes += 1;
 
@@ -72,7 +73,9 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
 
   bool undefined = false;
   for (auto move : moves) {
-    if (game->fills_eye(move, c)) continue;
+    if (game->fills_eye(move, c)) {
+      continue;
+    }
     bool legal = game->make_move(move, c);
     if (!legal) continue;
     Result r = alpha_beta(game, Go::opponent(c), -1 * beta, -1 * alpha, d + 1,
@@ -83,6 +86,10 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
     // negamax variant
     r.value *= -1;
     game->undo_move();
+
+    if (d == 0) {
+      std::cout << move << " " << r.value << std::endl;
+    }
 
     if (r.is_undefined()) {
       undefined = true;
@@ -103,10 +110,10 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
 
   if (!best.benson && undefined) best.reset();
 
-  if (!undefined && !game->last_move_was_pass()) {
-//    add_iso_pos_to_TT(game->get_isomorphic_paths(),
- //       game->get_isomorphic_moves(best.best_move), best, c, max_depth);
+  if (!game->last_move_was_pass()) {
+    add_to_TT(game->get_current_path(), best, c, max_depth);
   }
+  
 
   best.benson = false;
 
@@ -150,17 +157,8 @@ void Solver::clean_theorems_3x3() {
   }
 }
 
-// TODO: pv bug because it's recovered from here
-void Solver::add_iso_pos_to_TT(const std::array<long, NUM_ISO>& batch, 
-    std::array<int, NUM_ISO> iso_moves, Result res, Color to_move, 
-    int max_depth) {
-  if (batch[0] == 0) return;
-  for (int i = 0; i < NUM_ISO; i++) {
-    if (TT.find(batch[i]) == TT.end() || !TT[batch[i]].res.terminal) {
-      Result r(res);
-      r.best_move = iso_moves[i];
-      TT_entry entry(r, to_move, max_depth);
-      TT[batch[i]] = entry;
-    }
+void Solver::add_to_TT(long pos, Result res, Color to_move, int max_depth) {
+  if (TT.find(pos) == TT.end() || !TT[pos].res.terminal) {
+    TT[pos] = TT_entry(res, to_move, max_depth);
   }
 }
