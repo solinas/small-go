@@ -58,7 +58,7 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
      return TT[path].res;
     }
   }
-  
+
   nodes += 1;
 
   // generate and sort moves
@@ -148,7 +148,7 @@ void Solver::display_results(Result r, int max_depth) {
 void Solver::init_theorems_3x3() {
   theorems_3x3.push_back(new Middle3x3());
   theorems_3x3.push_back(new Corner3x3());
-  theorems_3x3.push_back(new SideOnly3x3());
+  //theorems_3x3.push_back(new SideOnly3x3());
 }
 
 void Solver::clean_theorems_3x3() {
