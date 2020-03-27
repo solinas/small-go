@@ -52,18 +52,19 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
   }
 
   // now check transposition table to see if we found an isomorphism
-  std::array<long, NUM_ISO> iso_paths = game->get_isomorphic_paths();
+  /*std::array<long, NUM_ISO> iso_paths = game->get_isomorphic_paths();
   for (auto path : iso_paths) {
     if (TT.find(path) != TT.end() && TT[path].to_move == c) {
      return TT[path].res;
     }
-  }
+  }*/
 
   nodes += 1;
 
   // generate and sort moves
   std::vector<int> moves;
   game->get_moves(&moves);
+
   if (game->size() == 3) {
     std::sort(moves.begin(), moves.end(),
       move_ordering_3x3(game->get_board(), c, d));
@@ -108,11 +109,12 @@ Result Solver::alpha_beta(Go *game, Color c, float alpha, float beta, int d,
     }
   }
 
-  if (!best.benson && undefined) best.reset();
+  if (undefined) best.reset();
 
+  /*
   if (!game->last_move_was_pass()) {
     add_to_TT(game->get_current_path(), best, c, max_depth);
-  }
+  } */
   
 
   best.benson = false;
@@ -148,7 +150,10 @@ void Solver::display_results(Result r, int max_depth) {
 void Solver::init_theorems_3x3() {
   theorems_3x3.push_back(new Middle3x3());
   theorems_3x3.push_back(new Corner3x3());
-  //theorems_3x3.push_back(new SideOnly3x3());
+  theorems_3x3.push_back(new SideOnly3x3());
+  theorems_3x3.push_back(new SideSingle3x3());
+  theorems_3x3.push_back(new SideDouble3x3());
+  theorems_3x3.push_back(new CornerSingle3x3());
 }
 
 void Solver::clean_theorems_3x3() {

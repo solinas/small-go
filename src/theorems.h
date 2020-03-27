@@ -83,13 +83,57 @@ class Middle3x3 : public Theorem {
   }
 };
 
+class SideSingle3x3 : public Theorem {
+  public:
+   SideSingle3x3() { value = 3; }
+   
+   bool applies(const Board &b, Color c) {
+     long sides[] = { 2, 8, 32, 128 };
+     Color opp = Go::opponent(c);
+     if (b.stones[opp] != 0) return false;
+     for (auto side : sides) {
+       if (b.stones[c] == side) return true;
+     }
+     return false;
+   }
+};
+
+class SideDouble3x3 : public Theorem {
+  public:
+   SideDouble3x3() { value = 3; }
+   
+   bool applies(const Board &b, Color c) {
+     long sides[] = { 3, 6, 9, 36, 72, 192, 288, 384};
+     Color opp = Go::opponent(c);
+     if (b.stones[opp] != 0) return false;
+     for (auto side : sides) {
+       if (b.stones[c] == side) return true;
+     }
+     return false;
+   }
+};
+
+class CornerSingle3x3 : public Theorem {
+  public:
+   CornerSingle3x3() { value = -9; }
+   
+   bool applies(const Board &b, Color c) {
+     long sides[] = { 1, 4, 64, 256 };
+     Color opp = Go::opponent(c);
+     if (b.stones[opp] != 0) return false;
+     for (auto side : sides) {
+       if (b.stones[c] == side) return true;
+     }
+     return false;
+   }
+};
 
 class SideOnly3x3 : public Theorem {
  public:
   SideOnly3x3() { value = -9; }
 
   bool applies(const Board& b, Color c) {
-    long sides[] = {5, 73, 292, 448};
+    long sides[] = { 5, 73, 292, 448 };
     long empty = b.empty_points();
     for (auto side : sides) {
       // 2^9 -1 = 511 (full board)

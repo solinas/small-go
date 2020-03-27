@@ -7,9 +7,9 @@
 std::regex GTP_interface::show_reg("showboard");
 std::regex GTP_interface::move_reg("play (b|w) [[:alpha:]][[:digit:]]");
 std::regex GTP_interface::genmove_reg("genmove (b|w)");
-std::regex GTP_interface::genmove_binary_reg("genmove (b|w) [[:digit:]]+");
+std::regex GTP_interface::genmove_binary_reg("genmove (b|w) -?[[:digit:]]+");
 std::regex GTP_interface::undo_reg("undo");
-std::regex GTP_interface::legal_reg("legal_moves (b|w)");
+std::regex GTP_interface::legal_reg("legal (b|w)");
 std::regex GTP_interface::score_reg("score");
 std::regex GTP_interface::quit_reg("quit");
 
@@ -52,6 +52,7 @@ bool GTP_interface::execute(std::string cmd) {
 
 void GTP_interface::msg_illegal(std::string cmd) {
   std::cout << "Illegal cmd: " << cmd << std::endl;
+  exit(0);
 }
 
 bool GTP_interface::show_board_cmd() {
